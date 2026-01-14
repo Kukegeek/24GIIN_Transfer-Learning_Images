@@ -28,11 +28,11 @@ El estudio utilizó un conjunto de datos balanceado compuesto por imágenes RGB 
 
 ### B. Diseño Experimental
 
-Se diseñó un protocolo experimental incremental para evaluar la sensibilidad del modelo al tamaño del conjunto de entrenamiento (*k-shot*):
+Se diseñó un protocolo experimental incremental para evaluar la sensibilidad del modelo al tamaño del conjunto de entrenamiento:
 
-- **Modelo 10 (A, B, C) (k=10):** Se entrenaron tres modelos independientes con inicialización aleatoria para evaluar la varianza y la estabilidad del aprendizaje con datos mínimos. Con subconjuntos de las 30 muestras disponibles, dando lugar a 3 conjuntos disjuntos.
-- **Modelo 20_samples (k=20):** Modelo entrenado con un incremento del 100% en el volumen de datos.
-- **Modelo 30_samples (k=30):** Modelo entrenado con el máximo volumen disponible.
+- **Modelo 10 (A, B, C) (n=10):** Se entrenaron tres modelos independientes con inicialización aleatoria para evaluar la varianza y la estabilidad del aprendizaje con datos mínimos. Con subconjuntos de las 30 muestras disponibles, dando lugar a 3 conjuntos disjuntos.
+- **Modelo 20_samples (n=20):** Modelo entrenado con un incremento del 100% en el volumen de datos.
+- **Modelo 30_samples (n=30):** Modelo entrenado con el máximo volumen disponible.
 
 ### C. Protocolo de Validación
 
@@ -60,33 +60,33 @@ En la Tabla I se muestra cómo la ganancia de rendimiento se aplana después de 
 
 ### A. Análisis de modelos con diferentes muestras (n=10)
 
-Los resultados obtenidos con diferentes modelos de 10 muestras demuestran una alta sensibilidad a las condiciones iniciales del entrenamiento. Esta inestabilidad es consistente con los fundamentos teóricos del aprendizaje automático descritos por Russell y Norvig [2], donde la aproximación de funciones complejas con escasas observaciones (muestras, k=10) conduce inevitablemente a una alta varianza y un pobre desempeño fuera de la muestra.
+Los resultados obtenidos con diferentes modelos de 10 muestras demuestran una alta sensibilidad a las condiciones iniciales del entrenamiento. Esta inestabilidad es consistente con los fundamentos teóricos del aprendizaje automático descritos por Russell y Norvig [2], donde la aproximación de funciones complejas con escasas observaciones (muestras, n=10) conduce inevitablemente a una alta varianza y un pobre desempeño fuera de la muestra.
 
-Se destaca la volatilidad en la categoría "No Comida" (**Tabla II**). Mientras que los modelos A y C clasificaron correctamente el 100% de las muestras, el Modelo B presentó una degradación del 20%. Esta disparidad confirma que, con n=10, los modelos no convergen hacia una solución generalizable robusta.
+Se destaca la volatilidad en la categoría no comida (**Tabla II**). Mientras que los modelos A y C clasificaron correctamente el 100% de las muestras, el modelo B presentó una degradación del 20%. Esta disparidad confirma que, con n=10, los modelos no convergen hacia una solución generalizable robusta.
 
 **Tabla II. Matriz de Variabilidad Inter-Modelo (n=10)**
 
-| Categoría       | Modelo A | Modelo B | Modelo C | Rango de Dispersión (Delta) |
+| Categoría       | Modelo A | Modelo B | Modelo C | Rango de dispersión (Delta) |
 |:----------------|--:|--:|--:|:----------------------------|
 | Sopa            |      80% |      90% |      90% | 10%                         |
-| Plato Principal |      90% |      80% |      70% | 20% (Crítico)               |
+| Plato principal |      90% |      80% |      70% | 20% (Crítico)               |
 | Ensalada        |     100% |     100% |      90% | 10%                         |
 | Postre          |      80% |      90% |      80% | 10%                         |
 | No Comida       |     100% |      80% |     100% | 20% (Crítico)               |
 
-Al analizar los errores acumulados en la categoría "Plato Principal", se determinó que el 66% de los falsos negativos fueron clasificados erróneamente como "Postre". Esto sugiere que la red identifica estructuras complejas, pero carece de la resolución para diferenciar clases semánticamente cercanas.
+Al analizar los errores acumulados en la categoría plato principal, se determinó que el 66% de los falsos negativos fueron clasificados erróneamente como postre. Esto sugiere que la red identifica estructuras complejas, pero carece de la resolución para diferenciar clases semánticamente cercanas.
 
-### B. Barrera Semántica en modelos más robustos (n=20, 30)
+### B. Barrera semántica en modelos más robustos (n=20, n=30)
 
-Al evaluar los modelos se identifica una limitación cualitativa. La **Tabla III** ilustra que el 75% de los errores totales se concentran en la confusión binaria entre "Plato Principal" y "Postre". La persistencia de este error, independientemente del aumento de datos, apunta a una homografía visual que requiere mecanismos de atención más sofisticados.
+Al evaluar los modelos se identifica una limitación cualitativa. La **Tabla III** ilustra que el 75% de los errores totales se concentran en la confusión binaria entre plato principal y postre. La persistencia de este error, independientemente del aumento de datos, apunta a una homografía visual que requiere mecanismos de atención más sofisticados.
 
-**Tabla III. Distribución de Errores en Modelos Convergentes (n = 20, 30)**
+**Tabla III. Distribución de errores en modelos convergentes (n = 20, n=30)**
 
-| Categoría Real (Ground Truth) | Fallos (n=20) | Fallos (n=30) | Total Acumulado | Etiología del Error Principal |
+| Categoría real | Fallos (n=20) | Fallos (n=30) | Total acumulado | Etiología del error principal |
 |:------------------------------|:-------------:|:-------------:|:---------------:|:-----------------------------|
-| Plato Principal               |       2       |       1       |        3        | Confusión con Postre (66%)   |
-| Postre                        |       1       |       2       |        3        | Confusión con Principal (66%)|
-| Sopa                          |       1       |       1       |        2        | Plato principal / Ensalada   |
+| Plato principal               |       2       |       1       |        3        | Confusión con postre (66%)   |
+| Postre                        |       1       |       2       |        3        | Confusión con principal (66%)|
+| Sopa                          |       1       |       1       |        2        | Plato principal / ensalada   |
 | Ensalada                      |       0       |       0       |        0        | -                            |
 | No Comida                     |       0       |       0       |        0        | -                            |
 | **TOTAL**                     |     **4**     |     **4**     |      **8**      | Predominancia de error semántico |
@@ -95,10 +95,10 @@ Al evaluar los modelos se identifica una limitación cualitativa. La **Tabla III
 
 Este estudio permite establecer dos conclusiones sobre redes neuronales profundas [2]:
 
-1. **Umbral de Estabilidad:** Se determina empíricamente que n=20 muestras por clase constituye el umbral mínimo para eliminar la varianza crítica observada en modelos de n=10.
-2. **Complejidad semántica:** El aumento de datos a n=30 no resolvió la confusión entre "Plato Principal" y "Postre". Esto indica que el problema no es meramente cuantitativo, sino de representación del conocimiento visual. La mayoría de los errores en este estudio provienen de la confusión entre estas dos clases. Esto se debe probablemente a que ambos tipos de comida comparten características visuales de bajo nivel (platos redondos, comida centrada, objetos adyacentes…), un problema que las arquitecturas residuales [1] pueden tener dificultades para desambiguar sin datos adicionales. Aumentar el dataset a 30 muestras no resolvió este problema.
+1. **Umbral de estabilidad:** Se determina empíricamente que n=20 muestras por clase constituye el umbral mínimo para eliminar la varianza crítica observada en modelos de n=10.
+2. **Complejidad semántica:** El aumento de datos a n=30 no resolvió la confusión entre plato principal y postre. Esto indica que el problema no es meramente cuantitativo, sino de representación del conocimiento visual. La mayoría de los errores en este estudio provienen de la confusión entre estas dos clases. Esto se debe probablemente a que ambos tipos de comida comparten características visuales de bajo nivel (platos redondos, comida centrada, objetos adyacentes…), un problema que las arquitecturas residuales [1] pueden tener dificultades para desambiguar sin datos adicionales. Aumentar el dataset a 30 muestras no resolvió este problema.
 
-Para resolver estos problemas, habrá que priorizar la calidad sobre la cantidad para estas clases conflictivas, o implementar mecanismos de atención visual que puedan detectar características específicas (ej. texturas de azúcar, tipos de cubiertos) que diferencian un postre de un plato principal.
+Para resolver estos problemas, habrá que priorizar la calidad sobre la cantidad para estas clases conflictivas, o implementar mecanismos de atención visual que puedan detectar características específicas (texturas de azúcar, tipos de cubiertos) que diferencian un postre de un plato principal.
 
 ## Referencias
 
